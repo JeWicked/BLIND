@@ -174,11 +174,11 @@ class RouterFragment: Fragment() {
                 if (result != null) {
                     mainModel.onEvent(
                         MainEvent.CreateNode(
-                        number,
-                        position,
-                        orientation,
-                        result
-                    ))
+                            number,
+                            position,
+                            orientation,
+                            result
+                        ))
                 }
             }
         }

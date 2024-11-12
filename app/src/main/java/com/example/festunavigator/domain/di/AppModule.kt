@@ -26,14 +26,10 @@ object AppModule {
     private const val DATABASE_NAME = "nodes"
     private const val DATABASE_DIR = "database/nodes.db"
 
+
     @Provides
     @Singleton
     fun provideDatabase(app: Application): Database {
-        // Check if the database file exists and delete it if it does
-        val dbFile = app.getDatabasePath(DATABASE_NAME)
-        if (dbFile.exists()) {
-            dbFile.delete()
-        }
 
         // Create a new instance of the database
         return Room.databaseBuilder(app, Database::class.java, DATABASE_NAME)

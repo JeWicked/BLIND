@@ -69,24 +69,24 @@ class ConfirmFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 mainModel.mainUiEvents.collect { uiEvent ->
-                        when (uiEvent) {
-                            is MainUiEvent.InitSuccess -> {
-                                val action = ConfirmFragmentDirections.actionConfirmFragmentToRouterFragment()
-                                findNavController().navigate(action)
-                            }
-                            is MainUiEvent.InitFailed -> {
-                                findNavController().popBackStack()
-                            }
-                            is MainUiEvent.EntryCreated -> {
-                                val action = ConfirmFragmentDirections.actionConfirmFragmentToRouterFragment()
-                                findNavController().navigate(action)
-                            }
-                            is MainUiEvent.EntryAlreadyExists -> {
-                                val action = ConfirmFragmentDirections.actionConfirmFragmentToRouterFragment()
-                                findNavController().navigate(action)
-                            }
-                            else -> {}
+                    when (uiEvent) {
+                        is MainUiEvent.InitSuccess -> {
+                            val action = ConfirmFragmentDirections.actionConfirmFragmentToRouterFragment()
+                            findNavController().navigate(action)
                         }
+                        is MainUiEvent.InitFailed -> {
+                            findNavController().popBackStack()
+                        }
+                        is MainUiEvent.EntryCreated -> {
+                            val action = ConfirmFragmentDirections.actionConfirmFragmentToRouterFragment()
+                            findNavController().navigate(action)
+                        }
+                        is MainUiEvent.EntryAlreadyExists -> {
+                            val action = ConfirmFragmentDirections.actionConfirmFragmentToRouterFragment()
+                            findNavController().navigate(action)
+                        }
+                        else -> {}
+                    }
                 }
             }
         }

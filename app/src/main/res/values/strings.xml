@@ -1,15 +1,15 @@
 <resources>
-    <string name="app_name_user" translatable="false">FESTU Navigator</string>
-    <string name="app_name_admin" translatable="false">Navigator Admin</string>
+    <string name="app_name_user" translatable="false">Blind Vision</string>
+    <string name="app_name_admin" translatable="false">Blind Vision</string>
     <string name="initialize">Initialize the graph please</string>
-    <string name="scan">Point the camera at the auditorium number</string>
-    <string name="orientate">Move the phone while pointing it at the audience number</string>
+    <string name="scan">Point the camera at the room number</string>
+    <string name="orientate">Point the camera at the floor, then slowly raise it toward the room number</string>
     <string name="link">Link</string>
     <string name="delete">Delete</string>
     <string name="entry">Entry</string>
     <string name="path">Path</string>
     <string name="cancel">Cancel</string>
-    <string name="confirm_place">Text was placed correctly?</string>
+    <string name="confirm_place">Was the text placed correctly?</string>
     <string name="from">Start</string>
     <string name="to">End</string>
     <string name="main">Main building</string>
