@@ -1,8 +1,10 @@
 package com.example.festunavigator.presentation.orientating
 
 import android.animation.ObjectAnimator
+import android.content.Intent
 import android.graphics.Path
 import android.os.Bundle
+import android.speech.tts.TextToSpeech
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -21,6 +23,7 @@ import com.example.festunavigator.presentation.scanner.ScannerFragment
 import com.google.ar.core.Plane
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import java.util.Locale
 
 @AndroidEntryPoint
 class OrientationFragment : Fragment() {
@@ -31,6 +34,8 @@ class OrientationFragment : Fragment() {
     private val mainModel: MainShareModel by activityViewModels()
 
     private var navigating = false
+
+    private lateinit var textToSpeech: TextToSpeech
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -57,6 +62,28 @@ class OrientationFragment : Fragment() {
                 }
             }
         }
+        // Initialize TextToSpeech
+        textToSpeech = TextToSpeech(requireContext()) { status ->
+            if (status == TextToSpeech.SUCCESS) {
+                val result = textToSpeech.setLanguage(Locale.US) // Or your desired locale
+
+                if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                    val installIntent = Intent()
+                    installIntent.action = TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA
+                    startActivity(installIntent)
+                } else {
+                    // TextToSpeech is ready
+                    textToSpeech.speak(
+                        "Point the camera at the floor, then slowly raise it toward the room number",
+                        TextToSpeech.QUEUE_FLUSH,
+                        null,
+                        null
+                    )
+                }
+            } else {
+                // Handle initialization error
+            }
+        }
     }
 
     override fun onResume() {
@@ -79,5 +106,13 @@ class OrientationFragment : Fragment() {
             }
         }
         super.onResume()
+    }
+    override fun onDestroyView() {
+        // Shutdown TextToSpeech when the fragment's view is destroyed
+        if (::textToSpeech.isInitialized) {
+            textToSpeech.stop()
+            textToSpeech.shutdown()
+        }
+        super.onDestroyView()
     }
 }
