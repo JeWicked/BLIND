@@ -1,5 +1,6 @@
 package com.example.festunavigator.presentation.router
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -15,7 +16,6 @@ import androidx.navigation.fragment.findNavController
 import com.example.festunavigator.R
 import com.example.festunavigator.data.App
 import com.example.festunavigator.databinding.FragmentRouterBinding
-import com.example.festunavigator.databinding.FragmentSearchBinding
 import com.example.festunavigator.domain.hit_test.HitTestResult
 import com.example.festunavigator.domain.use_cases.GetDestinationDesc
 import com.example.festunavigator.domain.use_cases.HitTest
@@ -36,6 +36,8 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import android.speech.tts.TextToSpeech
+import java.util.Locale
 
 @AndroidEntryPoint
 class RouterFragment: Fragment() {
@@ -50,6 +52,8 @@ class RouterFragment: Fragment() {
     private var _binding: FragmentRouterBinding? = null
     private val binding get() = _binding!!
 
+    private lateinit var textToSpeech: TextToSpeech
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -59,6 +63,31 @@ class RouterFragment: Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+
+        // Initialize TextToSpeech
+        textToSpeech = TextToSpeech(requireContext()) { status ->
+            if (status == TextToSpeech.SUCCESS) {
+                val result = textToSpeech.setLanguage(Locale.US)
+
+
+                if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                    val installIntent = Intent()
+                    installIntent.action = TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA
+                    startActivity(installIntent)
+
+                } else
+                {
+                    textToSpeech.speak(
+                        "For users, please input start and destination points",
+                        TextToSpeech.QUEUE_FLUSH,
+                        null,
+                        null
+                    )
+                }
+            } else {
+                // Handle initialization error
+            }
+        }
 
         if (App.mode == App.ADMIN_MODE) {
             binding.adminPanel.isVisible = true
@@ -192,5 +221,11 @@ class RouterFragment: Fragment() {
 
         return hitTest(frame, Float2(x, y))
     }
+    override fun onDestroyView() {
+        if (::textToSpeech.isInitialized) {
+            textToSpeech.stop()
+            textToSpeech.shutdown()
+        }
 
+    }
 }
