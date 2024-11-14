@@ -1,6 +1,7 @@
 package com.example.festunavigator.presentation.scanner
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -38,7 +39,9 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.Locale
 import javax.inject.Inject
+import android.speech.tts.TextToSpeech
 
 private const val SMOOTH_DELAY = 0.5
 
@@ -67,6 +70,8 @@ class ScannerFragment: Fragment() {
 
     private var navigating = false
 
+    private lateinit var textToSpeech: TextToSpeech
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         displayRotationHelper = DisplayRotationHelper(context)
@@ -90,7 +95,23 @@ class ScannerFragment: Fragment() {
                 }
             }
         }
+        // Initialize TextToSpeech
+        textToSpeech = TextToSpeech(requireContext()) { status ->
+            if (status == TextToSpeech.SUCCESS) {
+                val result = textToSpeech.setLanguage(Locale.US)
 
+                if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                    val installIntent = Intent()
+                    installIntent.action = TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA
+                    startActivity(installIntent)
+                } else {
+                    // TextToSpeech is ready
+                    textToSpeech.speak("Point the camera at the room number", TextToSpeech.QUEUE_FLUSH, null, null)
+                }
+            } else {
+                // Handle initialization error
+            }
+        }
     }
 
     override fun onResume() {
@@ -260,4 +281,5 @@ class ScannerFragment: Fragment() {
         const val TYPE_INITIALIZE = 0
         const val TYPE_ENTRY = 1
     }
+
 }
